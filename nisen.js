@@ -5,6 +5,7 @@ function convert(){
     if(isKana(input)){
 	//
 	let kanaString = sanitize(input);
+	console.log(kanaString);
 	//tokens 点字トークンの文字列を要素とする配列
 	let tokens = Array.prototype.concat.apply([],tokenize(kanaString).map(braillize));
 	//出力先
@@ -19,8 +20,14 @@ function convert(){
 
 function sanitize(str){
     //ひらがなをすべてカタカナに変換
-    t = str.replace(/ぁ-ん/,function(s){
-	return String.fromCharCode(s.charCodeAt(0) + 0x60)});
+    t = "";
+    for(let i=0;i<str.length;i++){
+	if(str[i].match(/[ぁ-ん]/)){
+	    t += String.fromCharCode(str[i].charCodeAt(0) + 0x60);
+	}else{
+	    t += str[i];
+	}
+    }	  
     return t;
 }
 
