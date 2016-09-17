@@ -1,14 +1,27 @@
 function convert(){
     //入力文字列
     let input = document.getElementById("i8086").value;
-    //tokens 点字トークンの文字列を要素とする配列
-    let tokens = Array.prototype.concat.apply([],tokenize(input).map(braillize));
-    //出力先
-    let output = document.getElementById("o157");
-    output.value = "";
-    tokens.map(amidaize).forEach(function(e){
-	output.value += e + "、";
-    });
+    //入力チェック
+    if(isKana(input)){
+	//
+	let kanaString = sanitize(input);
+	//tokens 点字トークンの文字列を要素とする配列
+	let tokens = Array.prototype.concat.apply([],tokenize(kanaString).map(braillize));
+	//出力先
+	let output = document.getElementById("o157");
+	output.value = "";
+	tokens.map(amidaize).forEach(function(e){
+	    output.value += e + "、";});
+    }else{
+	alert("ひらがな・カタカナ以外の変換できない文字が含まれています");
+    }   
+}
+
+function sanitize(str){
+    //ひらがなをすべてカタカナに変換
+    t = str.replace(/ぁ-ん/,function(s){
+	return String.fromCharCode(s.charCodeAt(0) + 0x60)});
+    return t;
 }
 
 function braillize(chs){
@@ -179,20 +192,15 @@ function tokenize(str){
     return kana_list;	
 }
 
-function amidaize(chs){
+function isKana(str){
+    //入力がひらがな・カタカナのみであるかチェック
+    let kana = /^[ぁ-んァ-ンー]+$/;
+    return str.match(kana);
+}
+
+function amidaize(str){
     //点字トークンが引数として与えられる
     //123456に南無阿弥陀仏を当てて変換
-    return chs.replace(/1/,"南").
-	replace(/2/,"無").
-	replace(/3/,"阿").
-	replace(/4/,"弥").
-	replace(/5/,"陀").
-	replace(/6/,"仏");
+    return str.replace(/1/,"南").replace(/2/,"無").replace(/3/,"阿").replace(/4/,"弥").replace(/5/,"陀").replace(/6/,"仏");
 }
-
-
-function sanitize(str){
-    //入力文字列をカタカナ化し、点字化可能かチェック
-}
-
 
